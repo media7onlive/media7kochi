@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import Footer from '../components/Footer'
+import LazyImage from '../components/LazyImage'
 import { jobs } from '../data/jobs'
 
 function useRevealOnScroll() {
@@ -47,10 +48,11 @@ export default function Careers({ onNavigate }) {
         {/* Hero Section */}
         <section className="reveal revealed relative h-[819px] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <img
+            <LazyImage
               alt="A wide-angle shot of a high-end, contemporary corporate office environment at twilight. The space features minimalist architectural lines, floor-to-ceiling glass windows reflecting city lights, and warm ambient spotlighting. Polished concrete floors and dark charcoal walls create a sophisticated, luxury agency atmosphere. The mood is professional, exclusive, and serene, utilizing a palette of deep blacks, grays, and subtle gold reflections."
-              className="w-full h-full object-cover opacity-40"
+              className="opacity-40"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3fCCfhwZ3psEGZR2aqmMRkS8EOsAGJznGo7n-kFkCxj_euLi2OwAxtvEenE79GJVR1jT3fQsKqmUaC3bT6SE7M_S5UlrRZxRc10yjbtyCi1kEIlhQXFAEvgxonAgLf2buh5hCP1qn_mA3vaSF1vxq9SMx8GwjvWXS2f9G_XMMGeodvs-z3YRhriOR9dZHhJz2dyMqLsQ-xSPJ2DxRfZn_bxVTwiC0S0Ns2KQu4R1rxgl-WS33TwDJpPKqJz9vLaAl2o4uJttefDc"
+              fetchPriority="high"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-[#0B0B0B]/0 via-[#0B0B0B]/60 to-[#0B0B0B]" />
           </div>
@@ -99,10 +101,11 @@ export default function Careers({ onNavigate }) {
             </div>
             <div className="grid grid-cols-12 gap-6 h-[700px]">
               <div className="reveal reveal-delay-1 col-span-8 relative group overflow-hidden">
-                <img
+                <LazyImage
                   alt="Office"
-                  className="w-full h-full object-cover transition-all duration-700"
+                  className="transition-all duration-700"
                   src="/office.webp"
+                  wrapperClassName="w-full h-full"
                 />
                 <div className="absolute bottom-0 left-0 p-8 bg-gradient-to-t from-black/80 to-transparent w-full">
                   <p className="font-headline-md text-white">Collaborative Excellence</p>
@@ -110,10 +113,11 @@ export default function Careers({ onNavigate }) {
               </div>
               <div className="col-span-4 flex flex-col gap-6">
                 <div className="reveal reveal-delay-2 flex-1 relative group overflow-hidden">
-                  <img
+                  <LazyImage
                     alt="Office Space"
-                    className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
+                    className="grayscale hover:grayscale-0 transition-all duration-700"
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAObYBjG_foNuqvX-UZGY38k5WDUusmobS9d1ovc24nEXK9iYlirPPeAic7G0SxnkODNUydxqpMGsz9IwQ4bGipy-injtY8EMQic6XITp5WBjtxp1SwT_IZC6Y5p7k1x0ufH5nDys5fWWL2xl2TdbglphHXrjOkYUN52eQYcpgznA8R97b3pDmkNnYFf2nixnuVa4_eOR55Grnyoh4pNVYxAstmfRWizTVQjnagRhHyHVe74Ss6TL2Q1wh6DhbsPDoI631bvN1Iqfc"
+                    wrapperClassName="w-full h-full"
                   />
                   <div className="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black/80 to-transparent w-full">
                     <p className="font-body-lg font-bold text-white">Inspiring Spaces</p>

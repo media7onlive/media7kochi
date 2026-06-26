@@ -38,12 +38,8 @@ const features = [
 
 const LAZY_BUFFER = 10
 const INITIAL_LOAD = 15
-
-function createImage(folder, index) {
-  const img = new Image()
-  img.src = `/${folder}/ezgif-frame-${String(index + 1).padStart(3, '0')}.webp`
-  return img
-}
+const CONCURRENCY_LIMIT = 6
+const IDLE_PRELOAD = 30
 
 export default function Hero() {
   const canvasRef = useRef(null)
@@ -51,6 +47,10 @@ export default function Hero() {
   const loadedRef = useRef(new Set())
   const frameRef = useRef(0)
   const rafRef = useRef(null)
+  const idleRef = useRef(null)
+  const queueRef = useRef([])
+  const activeLoadsRef = useRef(0)
+  const prevFrameRef = useRef(0)
   const [progress, setProgress] = useState(0)
   const [activeFeature, setActiveFeature] = useState(0)
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600)
@@ -59,21 +59,74 @@ export default function Hero() {
     return isMobile ? 'hero_mobile' : 'hero_desktop'
   }
 
-  function loadFrame(index) {
+  function createImage(folder, index, priority) {
+    const img = new Image()
+    img.src = `/${folder}/ezgif-frame-${String(index + 1).padStart(3, '0')}.webp`
+    img.fetchPriority = priority || 'low'
+    img.decoding = 'async'
+    return img
+  }
+
+  function processQueue() {
+    while (activeLoadsRef.current < CONCURRENCY_LIMIT && queueRef.current.length > 0) {
+      const { folder, index, priority } = queueRef.current.shift()
+      activeLoadsRef.current++
+      const img = createImage(folder, index, priority)
+      imagesRef.current[index] = img
+      img.onload = () => {
+        activeLoadsRef.current--
+        processQueue()
+        if (index === frameRef.current || index === 0) drawFrame(index)
+      }
+      img.onerror = () => { activeLoadsRef.current--; processQueue() }
+      if (img.complete) img.onload()
+    }
+  }
+
+  function preloadCritical(folder) {
+    for (let i = 0; i < 3; i++) {
+      const link = document.createElement('link')
+      link.rel = 'preload'
+      link.as = 'image'
+      link.href = `/${folder}/ezgif-frame-${String(i + 1).padStart(3, '0')}.webp`
+      link.fetchPriority = 'high'
+      document.head.appendChild(link)
+    }
+  }
+
+  function loadFrame(index, priority) {
     if (loadedRef.current.has(index)) return
     loadedRef.current.add(index)
-    const img = createImage(getFolder(), index)
-    imagesRef.current[index] = img
-    img.onload = () => {
-      if (index === frameRef.current || index === 0) drawFrame(index)
-    }
-    if (img.complete) img.onload()
+    queueRef.current.push({ folder: getFolder(), index, priority })
+    processQueue()
   }
 
   function ensureWindow(center) {
     const start = Math.max(0, center - LAZY_BUFFER)
     const end = Math.min(TOTAL_FRAMES - 1, center + LAZY_BUFFER)
-    for (let i = start; i <= end; i++) loadFrame(i)
+    for (let i = start; i <= end; i++) {
+      const dist = Math.abs(i - center)
+      loadFrame(i, dist <= 3 ? 'high' : 'low')
+    }
+  }
+
+  function preloadIdle(center) {
+    if (idleRef.current) cancelIdleCallback(idleRef.current)
+    const fn = typeof requestIdleCallback === 'function'
+      ? requestIdleCallback
+      : (cb) => setTimeout(cb, 200)
+    const direction = center >= prevFrameRef.current ? 1 : -1
+    prevFrameRef.current = center
+    idleRef.current = fn(() => {
+      const start = Math.max(0, center + direction * (LAZY_BUFFER + 1))
+      const end = direction > 0
+        ? Math.min(TOTAL_FRAMES - 1, center + LAZY_BUFFER + IDLE_PRELOAD)
+        : Math.max(0, center - LAZY_BUFFER - IDLE_PRELOAD)
+      const step = direction
+      for (let i = start; direction > 0 ? i <= end : i >= end; i += step) {
+        if (!loadedRef.current.has(i)) loadFrame(i, 'low')
+      }
+    }, { timeout: 3000 })
   }
 
   function drawFrame(index) {
@@ -120,6 +173,7 @@ export default function Hero() {
 
     imagesRef.current = []
     loadedRef.current = new Set()
+    preloadCritical(getFolder())
     for (let i = 0; i < INITIAL_LOAD; i++) loadFrame(i)
 
     return () => {
@@ -137,6 +191,7 @@ export default function Hero() {
 
       const frameIndex = Math.min(Math.floor(p * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1)
       ensureWindow(frameIndex)
+      preloadIdle(frameIndex)
 
       if (frameIndex !== frameRef.current) {
         frameRef.current = frameIndex
@@ -159,7 +214,10 @@ export default function Hero() {
   }, [handleScroll])
 
   useEffect(() => {
-    return () => { document.documentElement.style.overflowY = 'auto' }
+    return () => {
+      document.documentElement.style.overflowY = 'auto'
+      if (idleRef.current) cancelIdleCallback(idleRef.current)
+    }
   }, [])
 
   return (

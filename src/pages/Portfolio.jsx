@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import Footer from '../components/Footer'
+import LazyImage from '../components/LazyImage'
 import { projects } from '../data/portfolio'
 
 function useRevealOnScroll() {
@@ -58,7 +59,7 @@ const Portfolio = ({ onNavigate }) => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter">
             {projects.map((project, i) => (
               <div key={project.id} className={`reveal reveal-delay-${(i % 6) + 1} ${project.gridClass} group relative overflow-hidden bg-[#1A1A1A] border border-white/5 ${project.aspect} project-card`}>
-                <img className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={project.alt} src={project.img} />
+                <LazyImage className="transition-transform duration-700 group-hover:scale-105" alt={project.alt} src={project.img} wrapperClassName="w-full h-full" />
                 <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-stack-lg backdrop-blur-[2px]">
                   <span className="text-[#F5C542] font-label-sm text-label-sm mb-2">{project.category}</span>
                   <h3 className="font-headline-md text-headline-md text-[#F5C542]">{project.title}</h3>

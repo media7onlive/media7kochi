@@ -47,7 +47,7 @@ export default function Footer({ onNavigate, currentPage }) {
         <div>
           <h4 className="font-bold text-white text-sm uppercase tracking-widest mb-6">Office</h4>
           <p className="font-manrope text-sm text-zinc-500 mb-2">3rd floor, National Pearl Star Building National Builders,3C, behind Changampuzha Metro Station, Edappally, Kochi, Kerala 682024</p>
-          <p className="font-manrope text-sm text-zinc-500">concierge@media7.com</p>
+          <p className="font-manrope text-sm text-zinc-500">Media 7</p>
         </div>
       </div>
       <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">

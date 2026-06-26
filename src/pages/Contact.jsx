@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
 import Footer from '../components/Footer'
 
-const WHATSAPP_NUMBER = '918590017388'
-
 function useRevealOnScroll() {
   useEffect(() => {
     const els = document.querySelectorAll('.reveal')

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import Footer from '../components/Footer'
+import LazyImage from '../components/LazyImage'
 
 function useRevealOnScroll() {
   useEffect(() => {
@@ -47,10 +48,11 @@ export default function Services({ onNavigate }) {
         <section className="reveal revealed relative h-[614px] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-gradient-to-b from-[#0B0B0B]/40 via-[#0B0B0B]/80 to-[#0B0B0B] z-10" />
-            <img
-              className="w-full h-full object-cover grayscale opacity-40"
+            <LazyImage
+              className="grayscale opacity-40"
               alt="A cinematic, low-angle shot of a high-end corporate skyscraper interior with polished obsidian surfaces and golden ambient lighting."
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH1js_D1xV_JQ0J1Gsd06MI9RXpcpt8-mq4X-e7cDxrLxvJpEMGdDeC2l_nF8-6bItg6-w2TluHUP3Qamv_tmeKqL0Ear5XRhmt5CgRxxdTc9Yfqy3CWacpCr-_k60faTFIl3X3Ts35Ndo27nEjv7wM5uo_srW0H7hDhphNk2WWHFPVo8YZYlXdqS3V46fMwFiyiJQWYzckGrkRebJIgTM0baeX6B_lReBGDa3FhhLvGal1PtMU1xiPstdy90_vrYAJYMkdQjrrVs"
+              fetchPriority="high"
             />
           </div>
           <div className="relative z-20 text-center max-w-4xl px-6">
@@ -87,10 +89,11 @@ export default function Services({ onNavigate }) {
               </div>
               <div className="order-1 lg:order-2">
                 <div className="aspect-[4/5] bg-[#1A1A1A] relative overflow-hidden rounded-lg group shadow-2xl">
-                  <img
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70"
+                  <LazyImage
+                    className="transition-transform duration-700 group-hover:scale-110"
                     alt="Branding and Advertising"
                     src="/service1.webp"
+                    wrapperClassName="w-full h-full"
                   />
                   <div className="absolute inset-0 border border-white/5 pointer-events-none" />
                 </div>
@@ -101,10 +104,11 @@ export default function Services({ onNavigate }) {
             <div className="reveal grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div>
                 <div className="aspect-[16/9] bg-[#1A1A1A] relative overflow-hidden rounded-lg group shadow-2xl">
-                  <img
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70"
+                  <LazyImage
+                    className="transition-transform duration-700 group-hover:scale-110"
                     alt="Media Production"
                     src="/service2.webp"
+                    wrapperClassName="w-full h-full"
                   />
                   <div className="absolute inset-0 border border-white/5 pointer-events-none" />
                 </div>
@@ -166,10 +170,11 @@ export default function Services({ onNavigate }) {
               </div>
               <div className="order-1 lg:order-2">
                 <div className="aspect-[4/3] bg-[#1A1A1A] relative overflow-hidden rounded-lg group shadow-2xl">
-                  <img
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70"
+                  <LazyImage
+                    className="transition-transform duration-700 group-hover:scale-110"
                     alt="Digital Marketing"
                     src="/service3.webp"
+                    wrapperClassName="w-full h-full"
                   />
                   <div className="absolute inset-0 border border-white/5 pointer-events-none" />
                 </div>
@@ -180,10 +185,11 @@ export default function Services({ onNavigate }) {
             <div className="reveal grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div>
                 <div className="aspect-[4/5] bg-[#1A1A1A] relative overflow-hidden rounded-lg group shadow-2xl">
-                  <img
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70"
+                  <LazyImage
+                    className="transition-transform duration-700 group-hover:scale-110"
                     alt="Events and Experiences"
                     src="/service4.webp"
+                    wrapperClassName="w-full h-full"
                   />
                   <div className="absolute inset-0 border border-white/5 pointer-events-none" />
                 </div>
@@ -239,10 +245,11 @@ export default function Services({ onNavigate }) {
               </div>
               <div className="order-1 lg:order-2">
                 <div className="aspect-[4/3] bg-[#1A1A1A] relative overflow-hidden rounded-lg group shadow-2xl">
-                  <img
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-70"
+                  <LazyImage
+                    className="transition-transform duration-700 group-hover:scale-110"
                     alt="Digital Marketing"
                     src="/service5.webp"
+                    wrapperClassName="w-full h-full"
                   />
                   <div className="absolute inset-0 border border-white/5 pointer-events-none" />
                 </div>

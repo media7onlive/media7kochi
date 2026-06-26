@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import Footer from '../components/Footer'
+import LazyImage from '../components/LazyImage'
 
 function useRevealOnScroll() {
   useEffect(() => {
@@ -45,10 +46,11 @@ export default function About({ onNavigate }) {
         {/* Hero Section */}
         <section className="relative h-[614px] flex items-center justify-center overflow-hidden reveal revealed">
           <div className="absolute inset-0 z-0">
-            <img
-              className="w-full h-full object-cover opacity-40"
+            <LazyImage
+              className="opacity-40"
               alt="A wide-angle shot of a sophisticated, high-end corporate lobby with deep charcoal walls and subtle golden accent lighting."
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuBARijy0q_LMUPiIacaLLQLJ0eqBG7eoKKa6hc5lXM9JHAYcDlyUNkzPHgf6hI4ZJ3nHbnrGUlIUpRiN7sSqKCtln-u3ECCc7J5dTheYe-r9iqrfaz_6Gzdhtw2dupuZWtbSn7ZBB2Yx5tnGX7dLAo-8bWx_3mzh3oyLZpKRq-hfFJaN0shaETQlSCiBhCTlf58pX0azB3GNZ7B1CSHSKbA-ET1IQNKnluGdOTYNtFw13j5xH0f7eCxsPEkbQaDe89CVgGeLS9v7p0"
+              fetchPriority="high"
             />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(180deg, rgba(11,11,11,0) 0%, rgba(11,11,11,1) 100%)' }} />
           </div>
@@ -159,10 +161,11 @@ export default function About({ onNavigate }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
             {/* Partner 1 */}
             <div className="group relative aspect-[3/4] overflow-hidden bg-surface-container-high border border-white/5 reveal">
-              <img
-                className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+              <LazyImage
+                className="transition-all duration-700 group-hover:scale-110"
                 alt="Grace Financials"
                 src="/grace_financials.jpg"
+                wrapperClassName="w-full h-full"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent opacity-90" />
               <div className="absolute bottom-0 left-0 p-8 w-full translate-y-2 group-hover:translate-y-0 transition-transform">
@@ -172,10 +175,11 @@ export default function About({ onNavigate }) {
             </div>
             {/* Partner 2 */}
             <div className="group relative aspect-[3/4] overflow-hidden bg-surface-container-high border border-white/5 reveal reveal-delay-1">
-              <img
-                className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+              <LazyImage
+                className="transition-all duration-700 group-hover:scale-110"
                 alt="Wild Wind Logo"
                 src="/wild_wind_logo.jpg"
+                wrapperClassName="w-full h-full"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent opacity-90" />
               <div className="absolute bottom-0 left-0 p-8 w-full translate-y-2 group-hover:translate-y-0 transition-transform">
@@ -185,10 +189,11 @@ export default function About({ onNavigate }) {
             </div>
             {/* Partner 3 */}
             <div className="group relative aspect-[3/4] overflow-hidden bg-surface-container-high border border-white/5 reveal reveal-delay-2">
-              <img
-                className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+              <LazyImage
+                className="transition-all duration-700 group-hover:scale-110"
                 alt="Anvi Group of Companies"
                 src="/anvi_group_of_companies_logo.png"
+                wrapperClassName="w-full h-full"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent opacity-90" />
               <div className="absolute bottom-0 left-0 p-8 w-full translate-y-2 group-hover:translate-y-0 transition-transform">
@@ -198,10 +203,11 @@ export default function About({ onNavigate }) {
             </div>
             {/* Partner 4 */}
             <div className="group relative aspect-[3/4] overflow-hidden bg-surface-container-high border border-white/5 reveal reveal-delay-3">
-              <img
-                className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+              <LazyImage
+                className="transition-all duration-700 group-hover:scale-110"
                 alt="Marina Properties Management"
                 src="/marina_properties_management_logo.jpg"
+                wrapperClassName="w-full h-full"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent opacity-90" />
               <div className="absolute bottom-0 left-0 p-8 w-full translate-y-2 group-hover:translate-y-0 transition-transform">

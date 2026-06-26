@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
+import LazyImage from '../components/LazyImage'
 import { projects } from '../data/portfolio'
 import { posts } from '../data/blog'
 
@@ -101,10 +102,11 @@ export default function Home({ onNavigate }) {
         {/* Hero Section */}
         <section className="relative h-[921px] flex items-center justify-center overflow-hidden reveal revealed">
           <div className="absolute inset-0 z-0">
-            <img
-              className="w-full h-full object-cover opacity-40"
+            <LazyImage
+              className="opacity-40"
               alt="A cinematic, low-key photograph of a high-end, minimalist creative studio with sleek black surfaces and ambient golden backlighting."
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOniR9dn00823gIKiZU16Q0nnBwUsDPUELbO5aIeEyctdxwameRzN8QZ2zpDLtwGQiSlrEiwHVXk8wMRDZjSRmP7-zGIepYPjCR4we8w50sOm-U3m8a4doLfsnArcwhkNjvW2DkEZEy8VfxecHxdLFZoAE0fAiTrVeQMtekyGfX3cea-zNAj3whasW2bHoJuHq16hF6UpTv13wowK7OFj8x5LMtFRLWXhXAdvmdysZ9ibX4V6ZYtZc7ClAmPk1VZn607DHG5rv9FE"
+              fetchPriority="high"
             />
             <div className="absolute inset-0 gradient-overlay" />
           </div>
@@ -214,8 +216,7 @@ export default function Home({ onNavigate }) {
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 items-center gap-20">
             <div className="relative reveal reveal-delay-1">
               <div className="aspect-[4/5] relative z-10">
-                <img
-                  className="w-full h-full object-cover"
+                <LazyImage
                   alt="Media7 Studio"
                   src="/home_section_1.webp"
                 />
@@ -250,10 +251,11 @@ export default function Home({ onNavigate }) {
               const isLarge = i === 0 || i === 3
               return (
                 <div key={project.id} className={`col-span-12 ${isLarge ? 'md:col-span-8' : 'md:col-span-4'} relative group overflow-hidden reveal reveal-delay-${i + 1}`}>
-                  <img
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  <LazyImage
+                    className="transition-transform duration-700 group-hover:scale-110"
                     alt={project.alt}
                     src={project.img}
+                    wrapperClassName="w-full h-full"
                   />
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-10">
                     <div>
@@ -277,10 +279,10 @@ export default function Home({ onNavigate }) {
               </p>
               <div className="flex flex-col items-center gap-4">
                 <div className="w-28 h-28 md:w-44 md:h-44 bg-zinc-800 rounded-full overflow-hidden">
-                  <img
-                    className="w-full h-full object-cover"
+                  <LazyImage
                     alt="CEO of Media7"
                     src="/CEO_of_Media7.webp"
+                    wrapperClassName="w-full h-full"
                   />
                 </div>
                 <div className="text-center">
@@ -302,10 +304,11 @@ export default function Home({ onNavigate }) {
             {posts.slice(0, 3).map((post, i) => (
               <div key={post.id} onClick={() => onNavigate?.(`blogpost-${post.id}`)} className={`group cursor-pointer reveal reveal-delay-${i + 1}`}>
                 <div className="aspect-[16/9] overflow-hidden mb-6">
-                  <img
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  <LazyImage
+                    className="transition-transform duration-500 group-hover:scale-105"
                     alt={post.alt}
                     src={post.img}
+                    wrapperClassName="w-full h-full"
                   />
                 </div>
                 <span className="font-label-sm text-gold uppercase tracking-widest mb-3 block">{post.category}</span>
