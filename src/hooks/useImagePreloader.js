@@ -1,81 +1,53 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import ImagePreloader from '../utils/ImagePreloader'
 
-const CRITICAL_FRAMES = 20
 const CONCURRENCY = 6
 
-function getFolder() {
-  return window.innerWidth <= 600 ? 'hero_mobile' : 'hero_desktop'
-}
-
-function buildFrameUrls(start, count) {
-  return Array.from({ length: count }, (_, i) =>
-    `/${getFolder()}/ezgif-frame-${String(start + i + 1).padStart(3, '0')}.webp`
-  )
-}
-
-const LOGO = '/logo.webp'
-
-export default function useImagePreloader({ onReady } = {}) {
+export default function useImagePreloader(imageList) {
   const [progress, setProgress] = useState(0)
-  const [ready, setReady] = useState(false)
-  const [backgroundStats, setBackgroundStats] = useState({ loaded: 0, total: 0 })
-
-  const bgRef = useRef(null)
-  const bgStarted = useRef(false)
+  const [done, setDone] = useState(false)
+  const [stats, setStats] = useState({ loaded: 0, failed: 0, total: 0 })
+  const preloaderRef = useRef(null)
 
   useEffect(() => {
+    if (!imageList || imageList.length === 0) {
+      const id = setTimeout(() => {
+        setProgress(1)
+        setDone(true)
+      }, 0)
+      return () => clearTimeout(id)
+    }
+
+    let cancelled = false
+
     const preloader = new ImagePreloader({
       concurrency: CONCURRENCY,
-      onProgress: (p) => setProgress(p),
-      onComplete: () => {
+      onProgress: (p, loaded, failed) => {
+        if (cancelled) return
+        setProgress(p)
+        setStats({ loaded, failed, total: imageList.length })
+      },
+      onComplete: ({ loaded, failed }) => {
+        if (cancelled) return
         setProgress(1)
-        setReady(true)
-        onReady?.()
+        setStats({ loaded: loaded.length, failed: failed.length, total: imageList.length })
+        setDone(true)
       },
     })
 
-    preloader.add(LOGO, 'high')
-    buildFrameUrls(0, CRITICAL_FRAMES).forEach(url => preloader.add(url, 'high'))
+    preloaderRef.current = preloader
+
+    for (const url of imageList) {
+      preloader.add(url)
+    }
 
     preloader.start()
 
-    return () => preloader.abort()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const startBackgroundLoad = useCallback((imageList) => {
-    if (bgStarted.current) return
-    bgStarted.current = true
-
-    const bg = new ImagePreloader({
-      concurrency: CONCURRENCY,
-      onProgress: (p, loaded, failed) => {
-        const total = loaded + failed + bg._queue.length + bg._active
-        setBackgroundStats({ loaded, total })
-      },
-      onComplete: () => {
-        setBackgroundStats(s => ({ ...s, loaded: s.total }))
-      },
-    })
-
-    bgRef.current = bg
-
-    buildFrameUrls(CRITICAL_FRAMES, 240 - CRITICAL_FRAMES).forEach(
-      url => bg.add(url, 'low')
-    )
-
-    if (imageList?.length) {
-      imageList.forEach(url => bg.add(url, 'normal'))
+    return () => {
+      cancelled = true
+      preloader.abort()
     }
+  }, [imageList])
 
-    const start = typeof requestIdleCallback === 'function'
-      ? (cb) => requestIdleCallback(cb, { timeout: 3000 })
-      : (cb) => setTimeout(cb, 500)
-
-    start(() => bg.start())
-
-    return () => bg.abort()
-  }, [])
-
-  return { progress, ready, backgroundStats, startBackgroundLoad }
+  return { progress, done, stats }
 }
