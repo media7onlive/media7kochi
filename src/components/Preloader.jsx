@@ -33,7 +33,7 @@ export default function Preloader({ progress = 0, visible = true }) {
             <circle cx="100" cy="100" r="78" fill="none" stroke="url(#ringGrad2)" strokeWidth="1.5" strokeDasharray="1 5" />
           </svg>
         </div>
-        <img src="/logo.webp" alt="Media7" className="preloader-logo" />
+        <img src="/logo_href.webp" alt="Media7_href" className="preloader-logo" />
         <div className="preloader-orbital-dots">
           {orbitalDots.map((deg, i) => (
             <div
