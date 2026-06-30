@@ -6,6 +6,8 @@ export default function Loading({ onNavigate }) {
   const [progress, setProgress] = useState(0)
   const [display, setDisplay] = useState(0)
   const ready = useRef(false)
+  const canvasRef = useRef(null)
+  const imagesRef = useRef([])
 
   useEffect(() => {
     if (ready.current) return
@@ -13,27 +15,65 @@ export default function Loading({ onNavigate }) {
 
     let loaded = 0
     const folder = window.innerWidth <= 600 ? 'hero_mobile' : 'hero_desktop'
+    const loadedImgs = []
+
+    function drawFrame(index) {
+      const img = loadedImgs[index]
+      if (!img) return
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const ctx = canvas.getContext('2d')
+      const cw = canvas.width
+      const ch = canvas.height
+      const cr = cw / ch
+      const ir = img.naturalWidth / img.naturalHeight
+      let sx, sy, sw, sh
+      if (ir > cr) {
+        sh = img.naturalHeight
+        sw = sh * cr
+        sx = (img.naturalWidth - sw) / 2
+        sy = 0
+      } else {
+        sw = img.naturalWidth
+        sh = sw / cr
+        sx = 0
+        sy = (img.naturalHeight - sh) / 2
+      }
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch)
+    }
+
+    function onFrameLoad(i) {
+      loaded = loaded + 1
+      setProgress(loaded / TOTAL_FRAMES)
+      const max = loaded
+      for (let j = 0; j < max; j++) {
+        if (loadedImgs[j] && loadedImgs[j].complete) {
+          drawFrame(j)
+          break
+        }
+      }
+      if (loaded === TOTAL_FRAMES) {
+        imagesRef.current = loadedImgs
+        setTimeout(function () { onNavigate('home') }, 600)
+      }
+    }
 
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image()
       const padded = String(i + 1).padStart(3, '0')
       img.src = '/' + folder + '/ezgif-frame-' + padded + '.webp'
-      img.onload = () => {
-        loaded = loaded + 1
-        setProgress(loaded / TOTAL_FRAMES)
-        if (loaded === TOTAL_FRAMES) {
-          setTimeout(function () { onNavigate('home') }, 600)
-        }
-      }
-      img.onerror = () => {
-        loaded = loaded + 1
-        setProgress(loaded / TOTAL_FRAMES)
-        if (loaded === TOTAL_FRAMES) {
-          setTimeout(function () { onNavigate('home') }, 600)
-        }
-      }
+      loadedImgs[i] = img
+      img.onload = function () { onFrameLoad(i) }
+      img.onerror = function () { onFrameLoad(i) }
     }
   }, [onNavigate])
+
+  useEffect(function () {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+  }, [])
 
   useEffect(function () {
     if (display >= 100) return
@@ -64,7 +104,13 @@ export default function Loading({ onNavigate }) {
           50% { text-shadow: 0 0 40px rgba(245,197,66,0.3), 0 0 80px rgba(245,197,66,0.1); }
         }
       `}</style>
-      <div className="relative flex flex-col items-center">
+
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 w-full h-full object-cover opacity-20"
+      />
+
+      <div className="relative flex flex-col items-center z-10">
         <div className="absolute -inset-14" style={{ animation: 'spin-slow 5s linear infinite' }}>
           <svg viewBox="0 0 200 200" className="w-full h-full" style={{ animation: 'ring-fade 4s ease-in-out infinite' }}>
             <defs>
@@ -108,7 +154,7 @@ export default function Loading({ onNavigate }) {
           })}
         </div>
       </div>
-      <div className="absolute bottom-28 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4">
+      <div className="absolute bottom-28 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 z-10">
         <div className="font-display-xl text-7xl md:text-8xl text-gold tabular-nums leading-none" style={{ animation: 'count-glow 2s ease-in-out infinite' }}>
           {pct}<span className="text-3xl md:text-4xl text-white/20">%</span>
         </div>

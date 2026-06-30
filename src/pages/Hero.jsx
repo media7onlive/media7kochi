@@ -36,98 +36,13 @@ const features = [
   },
 ]
 
-const LAZY_BUFFER = 10
-const INITIAL_LOAD = 15
-const CONCURRENCY_LIMIT = 6
-const IDLE_PRELOAD = 30
-
 export default function Hero() {
   const canvasRef = useRef(null)
   const imagesRef = useRef([])
-  const loadedRef = useRef(new Set())
   const frameRef = useRef(0)
-  const rafRef = useRef(null)
-  const idleRef = useRef(null)
-  const queueRef = useRef([])
-  const activeLoadsRef = useRef(0)
-  const prevFrameRef = useRef(0)
   const [progress, setProgress] = useState(0)
   const [activeFeature, setActiveFeature] = useState(0)
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600)
-
-  function getFolder() {
-    return isMobile ? 'hero_mobile' : 'hero_desktop'
-  }
-
-  function createImage(folder, index, priority) {
-    const img = new Image()
-    img.src = `/${folder}/ezgif-frame-${String(index + 1).padStart(3, '0')}.webp`
-    img.fetchPriority = priority || 'low'
-    img.decoding = 'async'
-    return img
-  }
-
-  function processQueue() {
-    while (activeLoadsRef.current < CONCURRENCY_LIMIT && queueRef.current.length > 0) {
-      const { folder, index, priority } = queueRef.current.shift()
-      activeLoadsRef.current++
-      const img = createImage(folder, index, priority)
-      imagesRef.current[index] = img
-      img.onload = () => {
-        activeLoadsRef.current--
-        processQueue()
-        if (index === frameRef.current || index === 0) drawFrame(index)
-      }
-      img.onerror = () => { activeLoadsRef.current--; processQueue() }
-      if (img.complete) img.onload()
-    }
-  }
-
-  function preloadCritical(folder) {
-    for (let i = 0; i < 3; i++) {
-      const link = document.createElement('link')
-      link.rel = 'preload'
-      link.as = 'image'
-      link.href = `/${folder}/ezgif-frame-${String(i + 1).padStart(3, '0')}.webp`
-      link.fetchPriority = 'high'
-      document.head.appendChild(link)
-    }
-  }
-
-  function loadFrame(index, priority) {
-    if (loadedRef.current.has(index)) return
-    loadedRef.current.add(index)
-    queueRef.current.push({ folder: getFolder(), index, priority })
-    processQueue()
-  }
-
-  function ensureWindow(center) {
-    const start = Math.max(0, center - LAZY_BUFFER)
-    const end = Math.min(TOTAL_FRAMES - 1, center + LAZY_BUFFER)
-    for (let i = start; i <= end; i++) {
-      const dist = Math.abs(i - center)
-      loadFrame(i, dist <= 3 ? 'high' : 'low')
-    }
-  }
-
-  function preloadIdle(center) {
-    if (idleRef.current) cancelIdleCallback(idleRef.current)
-    const fn = typeof requestIdleCallback === 'function'
-      ? requestIdleCallback
-      : (cb) => setTimeout(cb, 200)
-    const direction = center >= prevFrameRef.current ? 1 : -1
-    prevFrameRef.current = center
-    idleRef.current = fn(() => {
-      const start = Math.max(0, center + direction * (LAZY_BUFFER + 1))
-      const end = direction > 0
-        ? Math.min(TOTAL_FRAMES - 1, center + LAZY_BUFFER + IDLE_PRELOAD)
-        : Math.max(0, center - LAZY_BUFFER - IDLE_PRELOAD)
-      const step = direction
-      for (let i = start; direction > 0 ? i <= end : i >= end; i += step) {
-        if (!loadedRef.current.has(i)) loadFrame(i, 'low')
-      }
-    }, { timeout: 3000 })
-  }
 
   function drawFrame(index) {
     const img = imagesRef.current[index]
@@ -163,49 +78,51 @@ export default function Hero() {
       canvas.height = window.innerHeight
       const mobile = window.innerWidth <= 600
       setIsMobile(mobile)
-      if (loadedRef.current.has(frameRef.current)) {
-        drawFrame(frameRef.current)
-      }
+      drawFrame(frameRef.current)
     }
 
     resize()
     window.addEventListener('resize', resize)
 
-    imagesRef.current = []
-    loadedRef.current = new Set()
-    preloadCritical(getFolder())
-    for (let i = 0; i < INITIAL_LOAD; i++) loadFrame(i)
+    const folder = isMobile ? 'hero_mobile' : 'hero_desktop'
+    const loaded = []
+
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      const img = new Image()
+      const padded = String(i + 1).padStart(3, '0')
+      img.src = `/${folder}/ezgif-frame-${padded}.webp`
+      loaded[i] = img
+      img.onload = function () {
+        if (i === 0) drawFrame(0)
+      }
+    }
+
+    imagesRef.current = loaded
 
     return () => {
       window.removeEventListener('resize', resize)
     }
-  }, [isMobile]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isMobile])
 
   const handleScroll = useCallback(() => {
-    if (rafRef.current) return
-    rafRef.current = requestAnimationFrame(() => {
-      rafRef.current = null
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-      const p = maxScroll > 0 ? Math.min(window.scrollY / maxScroll, 1) : 0
-      setProgress(p)
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+    if (maxScroll <= 0) return
+    const p = Math.min(window.scrollY / maxScroll, 1)
+    setProgress(p)
 
-      const frameIndex = Math.min(Math.floor(p * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1)
-      ensureWindow(frameIndex)
-      preloadIdle(frameIndex)
+    const frameIndex = Math.min(Math.floor(p * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1)
+    if (frameIndex !== frameRef.current) {
+      frameRef.current = frameIndex
+      drawFrame(frameIndex)
+    }
 
-      if (frameIndex !== frameRef.current) {
-        frameRef.current = frameIndex
-        drawFrame(frameIndex)
+    for (let i = features.length - 1; i >= 0; i--) {
+      if (p >= features[i].range[0] && p < features[i].range[1]) {
+        setActiveFeature(i)
+        break
       }
-
-      for (let i = features.length - 1; i >= 0; i--) {
-        if (p >= features[i].range[0] && p < features[i].range[1]) {
-          setActiveFeature(i)
-          break
-        }
-      }
-    })
-  }, [isMobile]) // eslint-disable-line react-hooks/exhaustive-deps
+    }
+  }, [])
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true })
@@ -213,25 +130,16 @@ export default function Hero() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [handleScroll])
 
-  useEffect(() => {
-    return () => {
-      document.documentElement.style.overflowY = 'auto'
-      if (idleRef.current) cancelIdleCallback(idleRef.current)
-    }
-  }, [])
-
   return (
     <>
       <style>{`
         html { scroll-behavior: smooth; }
         body { -webkit-overflow-scrolling: touch; }
-        canvas { will-change: transform; }
       `}</style>
       <div className="fixed inset-0 bg-black">
         <canvas
           ref={canvasRef}
           className="block w-full h-full"
-          style={{ willChange: 'transform' }}
         />
       </div>
 
