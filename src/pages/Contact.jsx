@@ -121,7 +121,7 @@ export default function Contact({ onNavigate }) {
                 </div>
                 <span className="font-label-sm text-label-sm text-zinc-500 uppercase tracking-widest">Call Directly</span>
               </div>
-              <p className="font-body-lg text-body-lg text-on-surface group-hover:text-[#F5C542] transition-colors">+91 99955 33988</p>
+              <p className="font-body-lg text-body-lg text-on-surface group-hover:text-[#F5C542] transition-colors">+91 99955 33809</p>
             </div>
 
             {/* Address Card */}

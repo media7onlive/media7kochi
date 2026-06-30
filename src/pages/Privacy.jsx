@@ -95,7 +95,7 @@ export default function Privacy({ onNavigate }) {
 
             <div className="reveal">
               <h2 className="font-headline-md text-on-surface mb-4">Contact Us</h2>
-              <p className="font-body-lg text-on-surface-variant leading-relaxed">If you have any questions about this Privacy Policy, please contact us at md@media7news.com mail or via WhatsApp at +91 99955 33988.</p>
+              <p className="font-body-lg text-on-surface-variant leading-relaxed">If you have any questions about this Privacy Policy, please contact us at md@media7news.com mail or via WhatsApp at +91 99955 33809.</p>
             </div>
 
             <div className="reveal pt-8 border-t border-white/5">
