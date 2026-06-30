@@ -85,7 +85,10 @@ export default function Services({ onNavigate }) {
                     Strategic Brand Positioning
                   </li>
                 </ul>
-                <button onClick={() => window.open('https://www.instagram.com/media7entertainments/', '_blank')} className="border border-white/20 px-8 py-3 font-bold text-on-background hover:bg-white/5 transition-all">Explore Branding</button>
+                <div className="flex flex-wrap gap-4">
+                  <button onClick={() => onNavigate('branding')} className="bg-[#F5C542] text-black px-8 py-3 font-bold hover:brightness-110 active:scale-95 transition-all">Explore Branding</button>
+                  <button onClick={() => window.open('https://www.instagram.com/media7entertainments/', '_blank')} className="border border-white/20 px-8 py-3 font-bold text-on-background hover:bg-white/5 transition-all">View on Instagram</button>
+                </div>
               </div>
               <div className="order-1 lg:order-2">
                 <div className="aspect-[4/5] bg-[#1A1A1A] relative overflow-hidden rounded-lg group shadow-2xl">

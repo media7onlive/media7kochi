@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 export default function Navbar({ onNavigate, currentPage }) {
   const [mobileOpen, setMobileOpen] = useState(false)
-  const links = ['Home', 'About', 'Services', 'Portfolio', 'Blog', 'Careers']
+  const links = ['Home', 'About', 'Services', 'Branding', 'Portfolio', 'Blog', 'Careers']
 
   const handleNav = (page) => {
     setMobileOpen(false)

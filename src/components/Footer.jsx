@@ -3,6 +3,7 @@ export default function Footer({ onNavigate, currentPage }) {
     { label: 'Home', page: 'home' },
     { label: 'About', page: 'about' },
     { label: 'Services', page: 'services' },
+    { label: 'Branding', page: 'branding' },
     { label: 'Portfolio', page: 'portfolio' },
     { label: 'Blog', page: 'blog' },
     { label: 'Careers', page: 'careers' },

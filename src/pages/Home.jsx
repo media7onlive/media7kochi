@@ -278,7 +278,7 @@ export default function Home({ onNavigate }) {
                 &quot;At Media7, we believe every brand has a story worth telling. Our mission is to create impactful content, innovative marketing strategies, and memorable brand experiences that help businesses connect with their audiences and achieve meaningful growth. We combine creativity, technology, and strategic thinking to deliver results that make a lasting impact.&quot;
               </p>
               <div className="flex flex-col items-center gap-4">
-                <div className="w-28 h-28 md:w-44 md:h-44 bg-zinc-800 rounded-full overflow-hidden">
+                <div className="w-28 h-28 md:w-64 md:h-64 bg-zinc-800 rounded-full overflow-hidden">
                   <LazyImage
                     alt="CEO of Media7"
                     src="/CEO_of_Media7.webp"

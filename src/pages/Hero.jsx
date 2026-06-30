@@ -222,10 +222,16 @@ export default function Hero() {
 
   return (
     <>
+      <style>{`
+        html { scroll-behavior: smooth; }
+        body { -webkit-overflow-scrolling: touch; }
+        canvas { will-change: transform; }
+      `}</style>
       <div className="fixed inset-0 bg-black">
         <canvas
           ref={canvasRef}
           className="block w-full h-full"
+          style={{ willChange: 'transform' }}
         />
       </div>
 
@@ -235,7 +241,7 @@ export default function Hero() {
         style={{
           backgroundColor: 'rgba(0,0,0,0.8)',
           opacity: Math.max(0, 1 - progress / 0.15),
-          transition: 'opacity 0.3s',
+          transition: 'opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1)',
         }}
       >
         <p className="text-white/70 text-xs md:text-sm tracking-[0.3em] uppercase">
@@ -250,7 +256,7 @@ export default function Hero() {
           bottom: isMobile ? 'auto' : '2rem',
           top: isMobile ? '1.5rem' : 'auto',
           opacity: progress > 0.5 ? 0 : 1,
-          transition: 'opacity 0.8s',
+          transition: 'opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1)',
         }}
       >
         <style>{`
@@ -280,7 +286,7 @@ export default function Hero() {
               className="absolute"
               style={{
                 opacity: isActive ? opacity : 0,
-                transition: 'opacity 0.2s',
+                transition: 'opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
                 ...(isMobile
                   ? { bottom: 0, left: 0, right: 0, display: 'flex', justifyContent: 'center' }
                   : { bottom: 'clamp(80px, 12vh, 140px)', left: 'clamp(24px, 6vw, 80px)' }
@@ -291,7 +297,7 @@ export default function Hero() {
                 className="backdrop-blur-xl rounded-r-3xl rounded-l-lg px-5 py-4 md:px-8 md:py-6 max-w-lg w-full md:w-auto"
                 style={{
                   transform: isActive ? `translateY(${y}px)` : 'translateY(0px)',
-                  transition: 'transform 0.2s',
+                  transition: 'transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
                   background: 'linear-gradient(135deg, rgba(180,140,50,0.06) 0%, rgba(120,90,30,0.03) 100%)',
                   border: '1px solid rgba(218,165,32,0.15)',
                   boxShadow: '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(218,165,32,0.08), 0 0 40px rgba(218,165,32,0.04)',

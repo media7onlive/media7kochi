@@ -5,6 +5,8 @@ import Hero from './pages/Hero'
 import Home from './pages/Home'
 import About from './pages/About'
 import Services from './pages/Services'
+import BrandingAgencyKochi from './pages/BrandingAgencyKochi'
+import Loading from './pages/Loading'
 import Portfolio from './pages/Portfolio'
 import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
@@ -15,12 +17,6 @@ import Terms from './pages/Terms'
 import Navbar from './components/Navbar'
 
 function buildImageList() {
-  const folder = window.innerWidth <= 600 ? 'hero_mobile' : 'hero_desktop'
-
-  const heroFrames = Array.from({ length: 240 }, (_, i) =>
-    `/${folder}/ezgif-frame-${String(i + 1).padStart(3, '0')}.webp`
-  )
-
   const contentImages = [
     '/logo.webp',
     '/logo2.webp',
@@ -61,11 +57,11 @@ function buildImageList() {
     'https://lh3.googleusercontent.com/aida-public/AB6AXuAObYBjG_foNuqvX-UZGY38k5WDUusmobS9d1ovc24nEXK9iYlirPPeAic7G0SxnkODNUydxqpMGsz9IwQ4bGipy-injtY8EMQic6XITp5WBjtxp1SwT_IZC6Y5p7k1x0ufH5nDys5fWWL2xl2TdbglphHXrjOkYUN52eQYcpgznA8R97b3pDmkNnYFf2nixnuVa4_eOR55Grnyoh4pNVYxAstmfRWizTVQjnagRhHyHVe74Ss6TL2Q1wh6DhbsPDoI631bvN1Iqfc',
   ]
 
-  return [...heroFrames, ...contentImages]
+  return contentImages
 }
 
 export default function App() {
-  const [page, setPage] = useState('home')
+  const [page, setPage] = useState('loading')
   const [siteVisible, setSiteVisible] = useState(false)
   const timelineReady = useRef(false)
 
@@ -93,17 +89,18 @@ export default function App() {
       }
 
       await new Promise(resolve => requestAnimationFrame(resolve))
-      showSite()
+      if (page !== 'loading') showSite()
     }
 
     prepareAndShow()
-  }, [done, showSite])
+  }, [done, showSite, page])
 
   const isBlogPost = page.startsWith('blogpost-')
-  const showNav = page !== 'home' && !isBlogPost
+  const showNav = page !== 'home' && page !== 'loading' && !isBlogPost
 
   function navigate(nextPage) {
     setPage(nextPage)
+    if (nextPage !== 'loading') setSiteVisible(true)
     window.history.pushState({ page: nextPage }, '', '')
   }
 
@@ -120,7 +117,9 @@ export default function App() {
 
   return (
     <>
-      <Preloader progress={progress} visible={!siteVisible} />
+      {page === 'loading' && <Loading onNavigate={navigate} />}
+
+      {page !== 'loading' && <Preloader progress={progress} visible={!siteVisible} />}
 
       <div
         style={{
@@ -141,6 +140,7 @@ export default function App() {
 
         {page === 'about' && <About onNavigate={navigate} />}
         {page === 'services' && <Services onNavigate={navigate} />}
+        {page === 'branding' && <BrandingAgencyKochi onNavigate={navigate} />}
         {page === 'portfolio' && <Portfolio onNavigate={navigate} />}
         {page === 'blog' && <Blog onNavigate={navigate} />}
         {page === 'contact' && <Contact onNavigate={navigate} />}
